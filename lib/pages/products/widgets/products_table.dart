@@ -2,6 +2,7 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:tl_web_admin/constants/style.dart';
+import 'package:tl_web_admin/providers/local.dart';
 import 'package:tl_web_admin/providers/product.dart';
 import 'package:tl_web_admin/providers/products.dart';
 import 'package:tl_web_admin/widgets/custom_text.dart';
@@ -15,6 +16,7 @@ class ProductsTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final product = Provider.of<Products>(context);
+    final local = Provider.of<Local>(context);
     List<Product> products = product.searchProducts(keyword, product.items);
     if (type != null) {
       products = product.searchByType(type, products);
@@ -81,10 +83,21 @@ class ProductsTable extends StatelessWidget {
                         children: [
                           IconButton(
                               icon: Icon(Icons.edit, color: Colors.orange),
-                              onPressed: () {}),
+                              onPressed: () async {
+                                await product.getEditProduct(new Product(
+                                    id: products[index].id,
+                                    title: products[index].title,
+                                    description: products[index].description,
+                                    price: products[index].price,
+                                    type: products[index].type,
+                                    imageUrl: products[index].imageUrl));
+                                local.changeProductScreenStatus('Edit');
+                              }),
                           IconButton(
                               icon: Icon(Icons.delete, color: Colors.red),
-                              onPressed: () {}),
+                              onPressed: () async {
+                                await product.deleteProduct(products[index].id);
+                              }),
                         ],
                       ))
                     ]))));

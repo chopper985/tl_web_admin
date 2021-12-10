@@ -15,6 +15,7 @@ class TypeProduct {
 class Products with ChangeNotifier {
   List<Product> _items = [];
   List<Product> _favorites = [];
+  Product _editProduct;
 
   String _typeDefault = 'All';
   String _authToken;
@@ -23,6 +24,10 @@ class Products with ChangeNotifier {
   void update(String authToken, String userId) {
     _authToken = authToken;
     _userId = userId;
+  }
+
+  Product get editProduct {
+    return _editProduct;
   }
 
   String get typeDefault {
@@ -45,6 +50,11 @@ class Products with ChangeNotifier {
 
   Product findById(String id) {
     return _items.firstWhere((element) => element.id == id);
+  }
+
+  void getEditProduct(Product product){
+    _editProduct = product;
+    notifyListeners();
   }
 
   List<Product> searchByType(String type, List<Product> products) {
