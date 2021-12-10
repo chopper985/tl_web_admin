@@ -91,7 +91,6 @@ class Order with ChangeNotifier {
   Future<void> changeStatus() async {
     for (int i = 0; i < _listSelect.length; i++) {
       try {
-        print(_listSelect[i].key + _listSelect[i].id);
         final url = Uri.parse(
             '${baseURL}orders/${_listSelect[i].key}/${_listSelect[i].id}.json');
         String status = _status == 'Ordered'
@@ -108,16 +107,15 @@ class Order with ChangeNotifier {
           }),
         );
         if (response.statusCode == 200) {
-          print('tt');
           _listDefautl
               .removeWhere((element) => element.id == _listSelect[i].id);
-          _listSelect.clear();
-          notifyListeners();
         }
       } catch (e) {
         print(e);
       }
     }
+    _listSelect.clear();
+    notifyListeners();
     fetchAllOrder();
   }
 

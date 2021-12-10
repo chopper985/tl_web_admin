@@ -3,12 +3,10 @@ import 'package:tl_web_admin/constants/controllers.dart';
 import 'package:tl_web_admin/helpers/reponsiveness.dart';
 import 'package:tl_web_admin/pages/orders/widgets/orders_table.dart';
 import 'package:tl_web_admin/pages/orders/widgets/orders_widget.dart';
-import 'package:tl_web_admin/pages/overview/widgets/info_card.dart';
 import 'package:tl_web_admin/providers/order.dart';
 import 'package:tl_web_admin/widgets/custom_text.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
-import 'package:sizer/sizer.dart';
 
 class OrdersPage extends StatefulWidget {
   const OrdersPage({Key key}) : super(key: key);
@@ -141,34 +139,41 @@ class _OrdersPageState extends State<OrdersPage> {
                     SizedBox(
                       height: _width / 128,
                     ),
-                    Container(
-                        height: 60,
-                        width: 20,
-                        margin: const EdgeInsets.all(8),
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                            gradient: LinearGradient(colors: [
-                              (_status == 'Ordered' ||
-                                      _status == 'In transit' ||
-                                      _status == 'Packed')
-                                  ? Colors.blue
-                                  : Colors.grey,
-                              (_status == 'Ordered' ||
-                                      _status == 'In transit' ||
-                                      _status == 'Packed')
-                                  ? Colors.blue.withOpacity(0.6)
-                                  : Colors.grey.withOpacity(0.6)
-                            ]),
-                            border: Border.all(width: 1),
-                            borderRadius: BorderRadius.circular(10)),
-                        child: TextButton(
-                            onPressed: () {
-                              if (_status == 'Ordered' ||
-                                  _status == 'In transit' ||
-                                  _status == 'Packed') order.changeStatus();
-                            },
-                            child: Text('Change Status',
-                                style: TextStyle(color: Colors.white)))),
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: Container(
+                              margin: const EdgeInsets.all(8),
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                  gradient: LinearGradient(colors: [
+                                    (_status == 'Ordered' ||
+                                            _status == 'In transit' ||
+                                            _status == 'Packed')
+                                        ? Colors.blue
+                                        : Colors.grey,
+                                    (_status == 'Ordered' ||
+                                            _status == 'In transit' ||
+                                            _status == 'Packed')
+                                        ? Colors.blue.withOpacity(0.6)
+                                        : Colors.grey.withOpacity(0.6)
+                                  ]),
+                                  border: Border.all(width: 1),
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: TextButton(
+                                  onPressed: () {
+                                    if (_status == 'Ordered' ||
+                                        _status == 'In transit' ||
+                                        _status == 'Packed')
+                                      order.changeStatus();
+                                  },
+                                  child: Text('Change Status',
+                                      style: TextStyle(color: Colors.white)))),
+                        ),
+                        Expanded(child: Container(), flex: 17)
+                      ],
+                    ),
                     OrdersTable()
                   ],
                 )),

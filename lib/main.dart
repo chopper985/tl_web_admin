@@ -6,6 +6,7 @@ import 'package:tl_web_admin/layout.dart';
 import 'package:tl_web_admin/pages/404/error.dart';
 import 'package:tl_web_admin/pages/authentication/authentication.dart';
 import 'package:tl_web_admin/providers/auth.dart';
+import 'package:tl_web_admin/providers/local.dart';
 import 'package:tl_web_admin/providers/order.dart';
 import 'package:tl_web_admin/providers/products.dart';
 import 'package:get/get.dart';
@@ -29,6 +30,9 @@ class MyApp extends StatelessWidget {
         providers: [
           ChangeNotifierProvider(
             create: (ctx) => Auth(),
+          ),
+          ChangeNotifierProvider(
+            create: (ctx) => Local(),
           ),
           ChangeNotifierProxyProvider<Auth, Products>(
               create: (_) => Products(),

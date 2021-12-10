@@ -5,16 +5,28 @@ import 'product.dart';
 import 'package:http/http.dart' as http;
 import 'package:tl_web_admin/utils/.env.dart';
 
+class TypeProduct {
+  final String id;
+  final String type;
+
+  TypeProduct(this.id, this.type);
+}
+
 class Products with ChangeNotifier {
   List<Product> _items = [];
   List<Product> _favorites = [];
 
+  String _typeDefault = 'All';
   String _authToken;
   String _userId;
 
   void update(String authToken, String userId) {
     _authToken = authToken;
     _userId = userId;
+  }
+
+  String get typeDefault {
+    return _typeDefault;
   }
 
   List<Product> get items {
@@ -35,15 +47,17 @@ class Products with ChangeNotifier {
     return _items.firstWhere((element) => element.id == id);
   }
 
-  List<Product> searchByType(String type) {
+  List<Product> searchByType(String type, List<Product> products) {
     List<Product> product = [];
-    product = _items.where((product) => product.type == type).toList();
+    if (type == 'All') {
+      return products;
+    }
+    product = products.where((product) => product.type == type).toList();
     return product;
   }
 
-  Future<List<Product>> fetchProducts() async {
-    var url = Uri.parse(
-        '${baseURL}products.json');
+  Future<void> fetchProducts() async {
+    var url = Uri.parse('${baseURL}products.json');
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
@@ -52,20 +66,21 @@ class Products with ChangeNotifier {
         return [];
       }
       final List<Product> loadingProducts = [];
-        extractedData.forEach((productId, productData) {
-          loadingProducts.add(
-            Product(
-              id: productId,
-              title: productData['title'],
-              description: productData['description'],
-              price: productData['price'],
-              imageUrl: productData['imgUrl'],
-              isFavorite: productData['isFavorite'],
-              type: productData['type'],
-            ),
-          );});
+      extractedData.forEach((productId, productData) {
+        loadingProducts.add(
+          Product(
+            id: productId,
+            title: productData['title'],
+            description: productData['description'],
+            price: productData['price'],
+            imageUrl: productData['imgUrl'],
+            isFavorite: productData['isFavorite'],
+            type: productData['type'],
+          ),
+        );
+      });
       _items = loadingProducts;
-      return loadingProducts;
+      notifyListeners();
     } catch (error) {
       return [];
     }
@@ -73,6 +88,9 @@ class Products with ChangeNotifier {
 
   List<Product> searchProducts(String name, List<Product> listProducts) {
     List<Product> result = [];
+    if (name == '') {
+      return listProducts;
+    }
     listProducts.forEach((p) {
       var exist = p.title.contains(name);
       if (exist) {

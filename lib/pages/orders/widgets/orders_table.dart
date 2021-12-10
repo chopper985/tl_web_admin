@@ -37,7 +37,8 @@ class _OrdersTableState extends State<OrdersTable> {
         child: DataTable2(
             onSelectAll: (val) => {
                   for (int i = 0; i < snapshotData.length; i++)
-                    {order.addSelect(val, snapshotData[i])}
+                    {order.addSelect(val, snapshotData[i])},
+                  print(order.listSelect.length)
                 },
             dataRowHeight: 100,
             columnSpacing: 12,

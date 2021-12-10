@@ -7,11 +7,18 @@ import 'package:tl_web_admin/providers/products.dart';
 import 'package:tl_web_admin/widgets/custom_text.dart';
 import 'package:provider/provider.dart';
 
-/// Example without datasource
 class ProductsTable extends StatelessWidget {
+  final String keyword;
+  final String type;
+
+  const ProductsTable({Key key, this.keyword, this.type}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     final product = Provider.of<Products>(context);
+    List<Product> products = product.searchProducts(keyword, product.items);
+    if (type != null) {
+      products = product.searchByType(type, products);
+    }
     return Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -26,58 +33,60 @@ class ProductsTable extends StatelessWidget {
         ),
         padding: const EdgeInsets.all(16),
         margin: EdgeInsets.only(bottom: 30),
-        child: FutureBuilder<List<Product>>(
-            future: product.fetchProducts(),
-            builder: (context, snapshot) {
-              return !snapshot.hasData
-                  ? Container()
-                  : DataTable2(
-                      dataRowHeight: 100,
-                      columnSpacing: 12,
-                      horizontalMargin: 12,
-                      minWidth: 600,
-                      columns: [
-                        DataColumn2(
-                          label: Text("Products Name"),
-                          size: ColumnSize.L,
-                        ),
-                        DataColumn2(
-                          label: Text('Type'),
-                          size: ColumnSize.S,
-                        ),
-                        DataColumn2(
-                          label: Text('Description'),
-                          size: ColumnSize.L,
-                        ),
-                        DataColumn2(
-                          label: Text('Price'),
-                          size: ColumnSize.S,
-                        ),
-                        DataColumn2(
-                          label: Text('Image'),
-                          size: ColumnSize.L,
-                        ),
-                      ],
-                      rows: List<DataRow>.generate(
-                          snapshot.data.length,
-                          (index) => DataRow(cells: [
-                                DataCell(CustomText(
-                                    text: snapshot.data[index].title)),
-                                DataCell(CustomText(
-                                    text: snapshot.data[index].type)),
-                                DataCell(CustomText(
-                                    text: snapshot.data[index].description)),
-                                DataCell(Row(
-                                  children: [
-                                    CustomText(
-                                        text: snapshot.data[index].price
-                                                .toString() +
-                                            '\$'),
-                                  ],
-                                )),
-                                DataCell(CustomText(
-                                    text: snapshot.data[index].imageUrl)),
-                              ])));
-            }));
+        child: DataTable2(
+            dataRowHeight: 100,
+            columnSpacing: 12,
+            horizontalMargin: 12,
+            minWidth: 600,
+            columns: [
+              DataColumn2(
+                label: Text("Products Name"),
+                size: ColumnSize.L,
+              ),
+              DataColumn2(
+                label: Text('Type'),
+                size: ColumnSize.S,
+              ),
+              DataColumn2(
+                label: Text('Description'),
+                size: ColumnSize.L,
+              ),
+              DataColumn2(
+                label: Text('Price'),
+                size: ColumnSize.S,
+              ),
+              DataColumn2(
+                label: Text('Image'),
+                size: ColumnSize.L,
+              ),
+              DataColumn2(
+                label: Text('Action'),
+                size: ColumnSize.M,
+              ),
+            ],
+            rows: List<DataRow>.generate(
+                products.length,
+                (index) => DataRow(cells: [
+                      DataCell(CustomText(text: products[index].title)),
+                      DataCell(CustomText(text: products[index].type)),
+                      DataCell(CustomText(text: products[index].description)),
+                      DataCell(Row(
+                        children: [
+                          CustomText(
+                              text: products[index].price.toString() + '\$'),
+                        ],
+                      )),
+                      DataCell(CustomText(text: products[index].imageUrl)),
+                      DataCell(Row(
+                        children: [
+                          IconButton(
+                              icon: Icon(Icons.edit, color: Colors.orange),
+                              onPressed: () {}),
+                          IconButton(
+                              icon: Icon(Icons.delete, color: Colors.red),
+                              onPressed: () {}),
+                        ],
+                      ))
+                    ]))));
   }
 }
