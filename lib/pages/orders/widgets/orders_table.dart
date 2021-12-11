@@ -1,6 +1,7 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:intl/intl.dart';
 import 'package:tl_web_admin/constants/style.dart';
 import 'package:tl_web_admin/providers/order.dart';
 import 'package:tl_web_admin/providers/order_item.dart';
@@ -8,6 +9,9 @@ import 'package:tl_web_admin/widgets/custom_text.dart';
 import 'package:provider/provider.dart';
 
 class OrdersTable extends StatefulWidget {
+  final String date;
+
+  const OrdersTable({Key key, this.date}) : super(key: key);
   @override
   State<OrdersTable> createState() => _OrdersTableState();
 }
@@ -18,7 +22,9 @@ class _OrdersTableState extends State<OrdersTable> {
   @override
   Widget build(BuildContext context) {
     final order = Provider.of<Order>(context);
-    final snapshotData = order.listDefautl;
+    final snapshotData = widget.date.isEmpty
+        ? order.listDefautl
+        : order.searchByDate(widget.date);
     final status = order.status;
     return Container(
         decoration: BoxDecoration(
@@ -87,9 +93,8 @@ class _OrdersTableState extends State<OrdersTable> {
                           DataCell(CustomText(
                               text: snapshotData[index].phoneNumber)),
                           DataCell(CustomText(
-                              text: snapshotData[index]
-                                  .dateTime
-                                  .toIso8601String())),
+                              text: DateFormat('dd/MM/yyyy')
+                                  .format(snapshotData[index].dateTime))),
                           DataCell(
                               CustomText(text: snapshotData[index].address)),
                           DataCell(ListView.builder(
@@ -97,9 +102,6 @@ class _OrdersTableState extends State<OrdersTable> {
                                 snapshotData[index].productsOrder[index].title),
                             itemCount: snapshotData[index].productsOrder.length,
                           )),
-                          // DataCell(Row(children: [
-                          //   IconButton(onPressed: (){}, icon: Icon(Icons.c
-                          // ],)),
                         ]))));
   }
 }

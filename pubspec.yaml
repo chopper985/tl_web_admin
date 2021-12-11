@@ -29,6 +29,7 @@ dependencies:
   data_table_2: ^2.0.3
   lottie: ^1.2.1
   sizer: ^2.0.15
+  intl: ^0.17.0
 
 
   # The following adds the Cupertino Icons font to your application.

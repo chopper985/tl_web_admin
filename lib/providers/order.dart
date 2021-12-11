@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:tl_web_admin/utils/.env.dart';
 import 'package:flutter/foundation.dart';
 import 'cart_item.dart';
@@ -126,6 +127,17 @@ class Order with ChangeNotifier {
       _listSelect.remove(order);
     }
     notifyListeners();
+  }
+
+  List<OrderItem> searchByDate(String date) {
+    final orders = _listDefautl
+        .where((element) =>
+            DateFormat('dd/MM/yyyy').format(element.dateTime) == date)
+        .toList();
+    if (orders.isEmpty) {
+      return [];
+    }
+    return orders;
   }
 
   Future<void> deleteOrder(String id) async {
