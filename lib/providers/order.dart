@@ -15,6 +15,10 @@ class Order with ChangeNotifier {
   List<OrderItem> _listCanceled = [];
   List<OrderItem> _listSelect = [];
   List<OrderItem> _listDefautl = [];
+  List<OrderItem> _orderToday = [];
+  List<OrderItem> _orderWeekly = [];
+  List<OrderItem> _orderMonthly = [];
+  List<OrderItem> _orderYearly = [];
 
   double _amountTotal;
 
@@ -127,6 +131,94 @@ class Order with ChangeNotifier {
       _listSelect.remove(order);
     }
     notifyListeners();
+  }
+
+  double totalMoneyByDay(int indexDate) {
+    double amount = 0;
+    var now = DateTime.now();
+    _orderToday = _listDelivered
+        .where((element) =>
+            DateFormat('dd/MM/yyyy')
+                .format(DateTime(now.year, now.month, now.day - indexDate)) ==
+            DateFormat('dd/MM/yyyy').format(element.dateTime))
+        .toList();
+    if (_orderToday.isEmpty) {
+      return 0;
+    }
+    _orderToday.forEach((element) {
+      amount = amount + element.amount;
+    });
+    return amount;
+  }
+
+  double totalMoney(int selectedDate) {
+    double amount = 0;
+    var now = DateTime.now();
+    if (selectedDate == 0) {
+      _orderToday = _listDelivered
+          .where((element) =>
+              DateFormat('dd/MM/yyyy').format(DateTime.now()) ==
+              DateFormat('dd/MM/yyyy').format(element.dateTime))
+          .toList();
+      if (_orderToday.isEmpty) {
+        return 0;
+      }
+      _orderToday.forEach((element) {
+        amount = amount + element.amount;
+      });
+    }
+    if (selectedDate == 1) {
+      for (int i = 0; i < 7; i++) {
+        _orderWeekly = _orderWeekly +
+            _listDelivered
+                .where((element) =>
+                    DateFormat('dd/MM/yyyy')
+                        .format(DateTime(now.year, now.month, now.day - i)) ==
+                    DateFormat('dd/MM/yyyy').format(element.dateTime))
+                .toList();
+      }
+      if (_orderWeekly.isEmpty) {
+        return 0;
+      }
+      _orderWeekly.forEach((element) {
+        amount = amount + element.amount;
+      });
+    }
+    if (selectedDate == 2) {
+      for (int i = 0; i < 30; i++) {
+        _orderMonthly = _orderMonthly +
+            _listDelivered
+                .where((element) =>
+                    DateFormat('dd/MM/yyyy')
+                        .format(DateTime(now.year, now.month, now.day - i)) ==
+                    DateFormat('dd/MM/yyyy').format(element.dateTime))
+                .toList();
+      }
+      if (_orderMonthly.isEmpty) {
+        return 0;
+      }
+      _orderMonthly.forEach((element) {
+        amount = amount + element.amount;
+      });
+    }
+    if (selectedDate == 3) {
+      for (int i = 0; i < 365; i++) {
+        _orderYearly = _orderYearly +
+            _listDelivered
+                .where((element) =>
+                    DateFormat('dd/MM/yyyy')
+                        .format(DateTime(now.year, now.month, now.day - i)) ==
+                    DateFormat('dd/MM/yyyy').format(element.dateTime))
+                .toList();
+      }
+      if (_orderYearly.isEmpty) {
+        return 0;
+      }
+      _orderYearly.forEach((element) {
+        amount = amount + element.amount;
+      });
+    }
+    return amount;
   }
 
   List<OrderItem> searchByDate(String date) {

@@ -1,7 +1,10 @@
 /// Bar chart example
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:tl_web_admin/constants/style.dart';
+import 'package:tl_web_admin/providers/order.dart';
 
 class SimpleBarChart extends StatelessWidget {
   final List<charts.Series> seriesList;
@@ -10,14 +13,13 @@ class SimpleBarChart extends StatelessWidget {
   SimpleBarChart(this.seriesList, {this.animate});
 
   /// Creates a [BarChart] with sample data and no transition.
-  factory SimpleBarChart.withSampleData() {
+  factory SimpleBarChart.withSampleData(BuildContext context) {
     return new SimpleBarChart(
-      _createSampleData(),
+      _createSampleData(context),
       // Disable animations for image tests.
       animate: false,
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -28,16 +30,35 @@ class SimpleBarChart extends StatelessWidget {
   }
 
   /// Create one series with sample hard coded data.
-  static List<charts.Series<OrdinalSales, String>> _createSampleData() {
+  static List<charts.Series<OrdinalSales, String>> _createSampleData(
+      BuildContext context) {
+    var now = DateTime.now();
+    final orders = Provider.of<Order>(context);
     final data = [
-      new OrdinalSales('Today', 55),
-      new OrdinalSales('Yesterday', 25),
-      new OrdinalSales('2 days', 100),
-      new OrdinalSales('24 Jun', 75),
-      new OrdinalSales('23 Jun', 15),
-      new OrdinalSales('22 Jun', 85),
-      new OrdinalSales('21 Jun', 45),
-
+      new OrdinalSales(
+          'Today', int.parse(orders.totalMoneyByDay(0).toString())),
+      new OrdinalSales(
+          'Yesterday', int.parse(orders.totalMoneyByDay(1).toString())),
+      new OrdinalSales(
+          DateFormat('dd-MM')
+              .format(DateTime(now.year, now.month, now.day - 2)),
+          int.parse(orders.totalMoneyByDay(2).toString())),
+      new OrdinalSales(
+          DateFormat('dd-MM')
+              .format(DateTime(now.year, now.month, now.day - 3)),
+          int.parse(orders.totalMoneyByDay(3).toString())),
+      new OrdinalSales(
+          DateFormat('dd-MM')
+              .format(DateTime(now.year, now.month, now.day - 4)),
+          int.parse(orders.totalMoneyByDay(4).toString())),
+      new OrdinalSales(
+          DateFormat('dd-MM')
+              .format(DateTime(now.year, now.month, now.day - 5)),
+          int.parse(orders.totalMoneyByDay(5).toString())),
+      new OrdinalSales(
+          DateFormat('dd-MM')
+              .format(DateTime(now.year, now.month, now.day - 6)),
+          int.parse(orders.totalMoneyByDay(6).toString())),
     ];
 
     return [
@@ -46,7 +67,7 @@ class SimpleBarChart extends StatelessWidget {
         colorFn: (_, __) => charts.ColorUtil.fromDartColor(active),
         domainFn: (OrdinalSales sales, _) => sales.year,
         measureFn: (OrdinalSales sales, _) => sales.sales,
-        data: data,
+        data: data.reversed.toList(),
       )
     ];
   }

@@ -23,7 +23,7 @@ class InfoOrderCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Container(
-          height: 75,
+          height: 85,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: Colors.white,

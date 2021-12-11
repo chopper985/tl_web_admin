@@ -83,7 +83,7 @@ class _ProductsPageState extends State<ProductsPage> {
                                     onPressed: () {
                                       local.changeProductScreenStatus('Create');
                                     },
-                                    child: Text('Create New Product',
+                                    child: Text('Create',
                                         style:
                                             TextStyle(color: Colors.white)))),
                           ),
