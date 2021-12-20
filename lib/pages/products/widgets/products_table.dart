@@ -96,7 +96,48 @@ class ProductsTable extends StatelessWidget {
                           IconButton(
                               icon: Icon(Icons.delete, color: Colors.red),
                               onPressed: () async {
-                                await product.deleteProduct(products[index].id);
+                                showDialog(
+                                    context: context,
+                                    builder: (ctx) => AlertDialog(
+                                          elevation: 5.0,
+                                          backgroundColor: Colors.white,
+                                          title: Row(
+                                            children: [
+                                              Icon(
+                                                Icons.warning_rounded,
+                                                size: 20.0,
+                                                color: Theme.of(context)
+                                                    .errorColor,
+                                              ),
+                                              SizedBox(
+                                                width: 15.0,
+                                              ),
+                                              Text('Are you sure?')
+                                            ],
+                                          ),
+                                          content: Text(
+                                              'Do you want to remove the item from the cart?'),
+                                          actions: [
+                                            // ignore: deprecated_member_use
+                                            FlatButton(
+                                                onPressed: () {
+                                                  Navigator.of(context,
+                                                          rootNavigator: true)
+                                                      .pop('dialog');
+                                                },
+                                                child: const Text('No')),
+                                            // ignore: deprecated_member_use
+                                            FlatButton(
+                                                onPressed: () async {
+                                                  await product.deleteProduct(
+                                                      products[index].id);
+                                                  Navigator.of(context,
+                                                          rootNavigator: true)
+                                                      .pop('dialog');
+                                                },
+                                                child: const Text('Yes')),
+                                          ],
+                                        ));
                               }),
                         ],
                       ))

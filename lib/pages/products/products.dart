@@ -28,8 +28,9 @@ class _ProductsPageState extends State<ProductsPage> {
   Future<void> didChangeDependencies() async {
     if (_isInit) {
       _keysearch.text = '';
-      await Provider.of<Products>(context).fetchProducts();
-      await Provider.of<Local>(context).changeProductScreenStatus('Default');
+      await Provider.of<Products>(context, listen: false).fetchProducts();
+      await Provider.of<Local>(context, listen: false)
+          .changeProductScreenStatus('Default');
     }
     _isInit = false;
     super.didChangeDependencies();

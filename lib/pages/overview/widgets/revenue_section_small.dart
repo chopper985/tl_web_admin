@@ -57,24 +57,22 @@ class RevenueSectionSmall extends StatelessWidget {
                 Row(
                   children: [
                     RevenueInfo(
-                      title: "Today\'s revenue",
-                      amount: orders.totalMoney(0).toStringAsFixed(0),
-                    ),
+                        title: "Today\'s revenue",
+                        amount: orders.totalMoneyToday().toString()),
                     RevenueInfo(
-                      title: "Last 7 days",
-                      amount: orders.totalMoney(1).toStringAsFixed(0),
-                    ),
+                        title: "Last 7 days",
+                        amount: orders.totalMoneyWeekly().toString()),
                   ],
                 ),
                 Row(
                   children: [
                     RevenueInfo(
                       title: "Last 30 days",
-                      amount: orders.totalMoney(2).toStringAsFixed(0),
+                      amount: orders.totalMoneyMonth().toString(),
                     ),
                     RevenueInfo(
                       title: "Last 12 months",
-                      amount: orders.totalMoney(3).toStringAsFixed(0),
+                      amount: orders.totalMoneyYear().toString(),
                     ),
                   ],
                 ),

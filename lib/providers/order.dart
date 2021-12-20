@@ -19,8 +19,15 @@ class Order with ChangeNotifier {
   List<OrderItem> _orderWeekly = [];
   List<OrderItem> _orderMonthly = [];
   List<OrderItem> _orderYearly = [];
+  double _orderAmountToday = 0;
+  double _orderAmountWeekly = 0;
+  double _orderAmountMonthly = 0;
+  double _orderAmountYearly = 0;
 
-  double _amountTotal;
+  List<CartItem> _lstCard = [];
+  bool _isDetail = false;
+
+  double _amountTotal = 0;
 
   String _authToken;
   String _userId;
@@ -35,12 +42,36 @@ class Order with ChangeNotifier {
     return _status;
   }
 
+  double get orderAmountToday {
+    return _orderAmountToday;
+  }
+
+  double get orderAmountWeekly {
+    return _orderAmountWeekly;
+  }
+
+  double get orderAmountMonthly {
+    return _orderAmountMonthly;
+  }
+
+  double get orderAmountYearly {
+    return _orderAmountYearly;
+  }
+
+  bool get isDetail {
+    return _isDetail;
+  }
+
   double get amountTotal {
     return _amountTotal;
   }
 
   bool get checkUser {
     return _userId == null;
+  }
+
+  List<CartItem> get lstCard {
+    return [..._lstCard];
   }
 
   List<OrderItem> get listSelect {
@@ -93,6 +124,21 @@ class Order with ChangeNotifier {
     notifyListeners();
   }
 
+  void checkDetail(List<CartItem> lstProduct, bool detail) {
+    _lstCard = lstProduct;
+    _isDetail = detail;
+    notifyListeners();
+  }
+
+  void removeTotal() {
+    _amountTotal = 0;
+    _orderAmountToday = 0;
+    _orderAmountWeekly = 0;
+    _orderAmountMonthly = 0;
+    _orderAmountYearly = 0;
+    notifyListeners();
+  }
+
   Future<void> changeStatus() async {
     for (int i = 0; i < _listSelect.length; i++) {
       try {
@@ -105,15 +151,29 @@ class Order with ChangeNotifier {
                 : _status == 'In transit'
                     ? 'Delivered'
                     : null;
-        final response = await http.patch(
-          url,
-          body: json.encode({
-            'status': status,
-          }),
-        );
-        if (response.statusCode == 200) {
-          _listDefautl
-              .removeWhere((element) => element.id == _listSelect[i].id);
+        if (status == 'Delivered') {
+          final response = await http.patch(
+            url,
+            body: json.encode({
+              'payment': 'Paid',
+              'status': status,
+            }),
+          );
+          if (response.statusCode == 200) {
+            _listDefautl
+                .removeWhere((element) => element.id == _listSelect[i].id);
+          }
+        } else {
+          final response = await http.patch(
+            url,
+            body: json.encode({
+              'status': status,
+            }),
+          );
+          if (response.statusCode == 200) {
+            _listDefautl
+                .removeWhere((element) => element.id == _listSelect[i].id);
+          }
         }
       } catch (e) {
         print(e);
@@ -134,7 +194,7 @@ class Order with ChangeNotifier {
   }
 
   double totalMoneyByDay(int indexDate) {
-    double amount = 0;
+    _amountTotal = 0;
     var now = DateTime.now();
     _orderToday = _listDelivered
         .where((element) =>
@@ -146,80 +206,163 @@ class Order with ChangeNotifier {
       return 0;
     }
     _orderToday.forEach((element) {
-      amount = amount + element.amount;
+      _amountTotal = _amountTotal + element.amount;
     });
-    return amount;
+    return _amountTotal;
   }
 
-  double totalMoney(int selectedDate) {
-    double amount = 0;
-    var now = DateTime.now();
-    if (selectedDate == 0) {
-      _orderToday = _listDelivered
-          .where((element) =>
-              DateFormat('dd/MM/yyyy').format(DateTime.now()) ==
-              DateFormat('dd/MM/yyyy').format(element.dateTime))
-          .toList();
-      if (_orderToday.isEmpty) {
-        return 0;
-      }
-      _orderToday.forEach((element) {
-        amount = amount + element.amount;
-      });
+  double totalMoneyToday() {
+    _orderAmountToday = 0;
+    _orderToday = [];
+    _orderToday = _listDelivered
+        .where((element) =>
+            DateFormat('dd/MM/yyyy').format(DateTime.now()) ==
+            DateFormat('dd/MM/yyyy').format(element.dateTime))
+        .toList();
+    if (_orderToday.isEmpty) {
+      _orderAmountToday = 0;
     }
-    if (selectedDate == 1) {
-      for (int i = 0; i < 7; i++) {
-        _orderWeekly = _orderWeekly +
-            _listDelivered
-                .where((element) =>
-                    DateFormat('dd/MM/yyyy')
-                        .format(DateTime(now.year, now.month, now.day - i)) ==
-                    DateFormat('dd/MM/yyyy').format(element.dateTime))
-                .toList();
-      }
-      if (_orderWeekly.isEmpty) {
-        return 0;
-      }
-      _orderWeekly.forEach((element) {
-        amount = amount + element.amount;
-      });
-    }
-    if (selectedDate == 2) {
-      for (int i = 0; i < 30; i++) {
-        _orderMonthly = _orderMonthly +
-            _listDelivered
-                .where((element) =>
-                    DateFormat('dd/MM/yyyy')
-                        .format(DateTime(now.year, now.month, now.day - i)) ==
-                    DateFormat('dd/MM/yyyy').format(element.dateTime))
-                .toList();
-      }
-      if (_orderMonthly.isEmpty) {
-        return 0;
-      }
-      _orderMonthly.forEach((element) {
-        amount = amount + element.amount;
-      });
-    }
-    if (selectedDate == 3) {
-      for (int i = 0; i < 365; i++) {
-        _orderYearly = _orderYearly +
-            _listDelivered
-                .where((element) =>
-                    DateFormat('dd/MM/yyyy')
-                        .format(DateTime(now.year, now.month, now.day - i)) ==
-                    DateFormat('dd/MM/yyyy').format(element.dateTime))
-                .toList();
-      }
-      if (_orderYearly.isEmpty) {
-        return 0;
-      }
-      _orderYearly.forEach((element) {
-        amount = amount + element.amount;
-      });
-    }
-    return amount;
+    _orderToday.forEach((element) {
+      _orderAmountToday = _orderAmountToday + element.amount;
+    });
+    return _orderAmountToday;
   }
+
+  double totalMoneyWeekly() {
+    _orderWeekly = [];
+    _orderAmountWeekly = 0 ;
+    var now = DateTime.now();
+    for (int i = 0; i < 7; i++) {
+      _orderWeekly = _orderWeekly +
+          _listDelivered
+              .where((element) =>
+                  DateFormat('dd/MM/yyyy')
+                      .format(DateTime(now.year, now.month, now.day - i)) ==
+                  DateFormat('dd/MM/yyyy').format(element.dateTime))
+              .toList();
+    }
+    if (_orderWeekly.isEmpty) {
+      _orderAmountWeekly = 0;
+    }
+    _orderWeekly.forEach((element) {
+      _orderAmountWeekly = _orderAmountWeekly + element.amount;
+    });
+    return _orderAmountWeekly;
+  }
+
+  double totalMoneyMonth() {
+    _orderAmountMonthly = 0;
+    _orderMonthly = [];
+    var now = DateTime.now();
+    for (int i = 0; i < 30; i++) {
+      _orderMonthly = _orderMonthly +
+          _listDelivered
+              .where((element) =>
+                  DateFormat('dd/MM/yyyy')
+                      .format(DateTime(now.year, now.month, now.day - i)) ==
+                  DateFormat('dd/MM/yyyy').format(element.dateTime))
+              .toList();
+    }
+    if (_orderMonthly.isEmpty) {
+      _orderAmountMonthly = 0;
+    }
+    _orderMonthly.forEach((element) {
+      _orderAmountMonthly = _orderAmountMonthly + element.amount;
+    });
+    return _orderAmountMonthly;
+  }
+
+  double totalMoneyYear() {
+    _orderAmountYearly = 0;
+    _orderYearly = [];
+    var now = DateTime.now();
+    for (int i = 0; i < 365; i++) {
+      _orderYearly = _orderYearly +
+          _listDelivered
+              .where((element) =>
+                  DateFormat('dd/MM/yyyy')
+                      .format(DateTime(now.year, now.month, now.day - i)) ==
+                  DateFormat('dd/MM/yyyy').format(element.dateTime))
+              .toList();
+    }
+    if (_orderYearly.isEmpty) {
+      _orderAmountYearly = 0;
+    }
+    _orderYearly.forEach((element) {
+      _orderAmountYearly = _orderAmountYearly + element.amount;
+    });
+    return _orderAmountYearly;
+  }
+
+  // void totalMoney(int selectedDate) {
+  //   var now = DateTime.now();
+  //   if (selectedDate == 0) {
+  //     _orderToday = _listDelivered
+  //         .where((element) =>
+  //             DateFormat('dd/MM/yyyy').format(DateTime.now()) ==
+  //             DateFormat('dd/MM/yyyy').format(element.dateTime))
+  //         .toList();
+  //     if (_orderToday.isEmpty) {
+  //       _orderAmountToday = 0;
+  //     }
+  //     _orderToday.forEach((element) {
+  //       _orderAmountToday = _orderAmountToday + element.amount;
+  //     });
+  //   }
+  //   if (selectedDate == 1) {
+  //     for (int i = 0; i < 7; i++) {
+  //       _orderWeekly = _orderWeekly +
+  //           _listDelivered
+  //               .where((element) =>
+  //                   DateFormat('dd/MM/yyyy')
+  //                       .format(DateTime(now.year, now.month, now.day - i)) ==
+  //                   DateFormat('dd/MM/yyyy').format(element.dateTime))
+  //               .toList();
+  //     }
+  //     if (_orderWeekly.isEmpty) {
+  //       _orderAmountWeekly = 0;
+  //     }
+  //     _orderWeekly.forEach((element) {
+  //       _orderAmountWeekly = _orderAmountWeekly + element.amount;
+  //     });
+  //   }
+  //   if (selectedDate == 2) {
+  //     for (int i = 0; i < 30; i++) {
+  //       _orderMonthly = _orderMonthly +
+  //           _listDelivered
+  //               .where((element) =>
+  //                   DateFormat('dd/MM/yyyy')
+  //                       .format(DateTime(now.year, now.month, now.day - i)) ==
+  //                   DateFormat('dd/MM/yyyy').format(element.dateTime))
+  //               .toList();
+  //     }
+  //     if (_orderMonthly.isEmpty) {
+  //       _orderAmountMonthly = 0;
+  //     }
+  //     _orderMonthly.forEach((element) {
+  //       _orderAmountMonthly = _orderAmountMonthly + element.amount;
+  //       print(_orderAmountMonthly);
+  //     });
+  //   }
+  //   if (selectedDate == 3) {
+  //     for (int i = 0; i < 365; i++) {
+  //       _orderYearly = _orderYearly +
+  //           _listDelivered
+  //               .where((element) =>
+  //                   DateFormat('dd/MM/yyyy')
+  //                       .format(DateTime(now.year, now.month, now.day - i)) ==
+  //                   DateFormat('dd/MM/yyyy').format(element.dateTime))
+  //               .toList();
+  //     }
+  //     if (_orderYearly.isEmpty) {
+  //       _orderAmountYearly = 0;
+  //     }
+  //     _orderYearly.forEach((element) {
+  //       _orderAmountYearly = _orderAmountYearly + element.amount;
+  //     });
+  //   }
+  //   notifyListeners();
+  // }
 
   List<OrderItem> searchByDate(String date) {
     final orders = _listDefautl
@@ -282,6 +425,7 @@ class Order with ChangeNotifier {
       final data = orderData as Map<String, dynamic>;
       data.forEach((orderId, value) {
         loadingOrder.add(OrderItem(
+          payment: value['payment'],
           key: key,
           id: orderId,
           phoneNumber: value['phoneNumber'],

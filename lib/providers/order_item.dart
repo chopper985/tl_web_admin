@@ -9,11 +9,13 @@ class OrderItem {
   final String userName;
   final String phoneNumber;
   final String address;
+  final String payment;
   final List<CartItem> productsOrder;
   String status;
 
   OrderItem(
-      {@required this.id,
+      {@required this.payment,
+      @required this.id,
       @required this.key,
       @required this.dateTime,
       @required this.amount,

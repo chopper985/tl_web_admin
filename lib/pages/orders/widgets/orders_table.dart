@@ -69,6 +69,10 @@ class _OrdersTableState extends State<OrdersTable> {
                 size: ColumnSize.L,
               ),
               DataColumn2(
+                label: Text('Payment'),
+                size: ColumnSize.M,
+              ),
+              DataColumn2(
                 label: Text("List Product"),
                 size: ColumnSize.L,
               ),
@@ -97,11 +101,18 @@ class _OrdersTableState extends State<OrdersTable> {
                                   .format(snapshotData[index].dateTime))),
                           DataCell(
                               CustomText(text: snapshotData[index].address)),
-                          DataCell(ListView.builder(
-                            itemBuilder: (context, index) => Text('>' +
-                                snapshotData[index].productsOrder[index].title),
-                            itemCount: snapshotData[index].productsOrder.length,
-                          )),
+                          DataCell(
+                              CustomText(text: snapshotData[index].payment)),
+                          DataCell(TextButton(
+                              onPressed: () {
+                                order.checkDetail(
+                                    snapshotData[index].productsOrder, true);
+                              },
+                              child: Text(
+                                'Detail',
+                                style:
+                                    TextStyle(color: Colors.blue, fontSize: 16),
+                              )))
                         ]))));
   }
 }

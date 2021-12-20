@@ -64,7 +64,23 @@ class SimpleBarChart extends StatelessWidget {
     return [
       new charts.Series<OrdinalSales, String>(
         id: 'Sales',
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(active),
+        colorFn: (OrdinalSales sales, __) {
+          switch (sales.year) {
+            case 'Today':
+              {
+                return charts.ColorUtil.fromDartColor(Colors.red);
+              }
+
+            case "Yesterday":
+              {
+                return charts.ColorUtil.fromDartColor(Colors.green);
+              }
+            default:
+              {
+                return charts.ColorUtil.fromDartColor(Colors.blue);
+              }
+          }
+        },
         domainFn: (OrdinalSales sales, _) => sales.year,
         measureFn: (OrdinalSales sales, _) => sales.sales,
         data: data.reversed.toList(),

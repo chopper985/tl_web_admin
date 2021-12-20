@@ -92,11 +92,11 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
           child: _isLoading
               ? Center(child: CircularProgressIndicator())
               : Container(
-                decoration: BoxDecoration(
-                  border: Border.all(width: 1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                  constraints: BoxConstraints(maxWidth: 400,maxHeight: 485),
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 1),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  constraints: BoxConstraints(maxWidth: 400, maxHeight: 485),
                   padding: EdgeInsets.all(24),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -211,16 +211,6 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                           ),
                         ),
                       ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      RichText(
-                          text: TextSpan(children: [
-                        TextSpan(text: "Do not have admin credentials? "),
-                        TextSpan(
-                            text: "Request Credentials! ",
-                            style: TextStyle(color: active))
-                      ]))
                     ],
                   ),
                 ),
