@@ -1,29 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:tl_web_admin/constants/controllers.dart';
+import 'package:tl_web_admin/helpers/reponsiveness.dart';
+import 'package:tl_web_admin/pages/orders/orders.dart';
 import 'package:tl_web_admin/pages/overview/widgets/info_card.dart';
 import 'package:tl_web_admin/providers/order.dart';
 import 'package:provider/provider.dart';
+import 'package:tl_web_admin/routing/routes.dart';
 
 class OverviewCardsLargeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double _width = MediaQuery.of(context).size.width;
     final order = Provider.of<Order>(context);
+    PageRoute _getPageRoute(Widget child) {
+      return MaterialPageRoute(builder: (context) => child);
+    }
+
+    void switchOrder(String status) {
+      order.setStatus(status);
+      _getPageRoute(OrdersPage());
+      menuController.changeActiveItemTo(ordersPageDisplayName);
+      if (ResponsiveWidget.isSmallScreen(context)) Get.back();
+      navigationController.navigateTo(ordersPageRoute);
+    }
+
     return Row(
       children: [
         InfoCard(
           title: "Ordered",
           value: order.listOrdered.length.toString(),
-          onTap: () {},
+          onTap: () => switchOrder('Ordered'),
           topColor: Colors.orange,
         ),
         SizedBox(
           width: _width / 64,
         ),
         InfoCard(
-          title: "Packages Delivered",
+          title: "Packed",
           value: order.listPacked.length.toString(),
           topColor: Colors.lightGreen,
-          onTap: () {},
+          onTap: () => switchOrder('Packed'),
         ),
         SizedBox(
           width: _width / 64,
@@ -32,7 +49,7 @@ class OverviewCardsLargeScreen extends StatelessWidget {
           title: "In Transit",
           value: order.listIntransit.length.toString(),
           topColor: Colors.redAccent,
-          onTap: () {},
+          onTap: () => switchOrder('In transit'),
         ),
         SizedBox(
           width: _width / 64,
@@ -40,7 +57,7 @@ class OverviewCardsLargeScreen extends StatelessWidget {
         InfoCard(
           title: "Delivered",
           value: order.listDelivered.length.toString(),
-          onTap: () {},
+          onTap: () => switchOrder('Delivered'),
         ),
       ],
     );
