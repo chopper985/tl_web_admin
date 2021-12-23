@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tl_web_admin/helpers/reponsiveness.dart';
 import 'package:tl_web_admin/constants/controllers.dart';
+import 'package:tl_web_admin/pages/overview/widgets/order_section_large.dart';
+import 'package:tl_web_admin/pages/overview/widgets/order_section_small.dart';
 import 'package:tl_web_admin/pages/overview/widgets/overview_cards_large.dart';
 import 'package:tl_web_admin/pages/overview/widgets/overview_cards_medium.dart';
 import 'package:tl_web_admin/pages/overview/widgets/overview_cards_small.dart';
@@ -67,6 +69,10 @@ class _OverviewPageState extends State<OverviewPage> {
                 RevenueSectionLarge()
               else
                 RevenueSectionSmall(),
+              if (!ResponsiveWidget.isSmallScreen(context))
+                OrderSectionLarge()
+              else
+                OrderSectionSmall()
             ],
           ))
         ],

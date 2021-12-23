@@ -21,7 +21,7 @@ class OverviewCardsMediumScreen extends StatelessWidget {
       order.setStatus(status);
       _getPageRoute(OrdersPage());
       menuController.changeActiveItemTo(ordersPageDisplayName);
-      if (ResponsiveWidget.isSmallScreen(context)) Get.back();
+      if (ResponsiveWidget.isMediumScreen(context)) Get.back();
       navigationController.navigateTo(ordersPageRoute);
     }
 

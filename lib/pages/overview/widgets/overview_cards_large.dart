@@ -21,7 +21,7 @@ class OverviewCardsLargeScreen extends StatelessWidget {
       order.setStatus(status);
       _getPageRoute(OrdersPage());
       menuController.changeActiveItemTo(ordersPageDisplayName);
-      if (ResponsiveWidget.isSmallScreen(context)) Get.back();
+      if (ResponsiveWidget.isLargeScreen(context)) Get.back();
       navigationController.navigateTo(ordersPageRoute);
     }
 

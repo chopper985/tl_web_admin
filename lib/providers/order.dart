@@ -230,7 +230,7 @@ class Order with ChangeNotifier {
 
   double totalMoneyWeekly() {
     _orderWeekly = [];
-    _orderAmountWeekly = 0 ;
+    _orderAmountWeekly = 0;
     var now = DateTime.now();
     for (int i = 0; i < 7; i++) {
       _orderWeekly = _orderWeekly +
@@ -294,76 +294,6 @@ class Order with ChangeNotifier {
     return _orderAmountYearly;
   }
 
-  // void totalMoney(int selectedDate) {
-  //   var now = DateTime.now();
-  //   if (selectedDate == 0) {
-  //     _orderToday = _listDelivered
-  //         .where((element) =>
-  //             DateFormat('dd/MM/yyyy').format(DateTime.now()) ==
-  //             DateFormat('dd/MM/yyyy').format(element.dateTime))
-  //         .toList();
-  //     if (_orderToday.isEmpty) {
-  //       _orderAmountToday = 0;
-  //     }
-  //     _orderToday.forEach((element) {
-  //       _orderAmountToday = _orderAmountToday + element.amount;
-  //     });
-  //   }
-  //   if (selectedDate == 1) {
-  //     for (int i = 0; i < 7; i++) {
-  //       _orderWeekly = _orderWeekly +
-  //           _listDelivered
-  //               .where((element) =>
-  //                   DateFormat('dd/MM/yyyy')
-  //                       .format(DateTime(now.year, now.month, now.day - i)) ==
-  //                   DateFormat('dd/MM/yyyy').format(element.dateTime))
-  //               .toList();
-  //     }
-  //     if (_orderWeekly.isEmpty) {
-  //       _orderAmountWeekly = 0;
-  //     }
-  //     _orderWeekly.forEach((element) {
-  //       _orderAmountWeekly = _orderAmountWeekly + element.amount;
-  //     });
-  //   }
-  //   if (selectedDate == 2) {
-  //     for (int i = 0; i < 30; i++) {
-  //       _orderMonthly = _orderMonthly +
-  //           _listDelivered
-  //               .where((element) =>
-  //                   DateFormat('dd/MM/yyyy')
-  //                       .format(DateTime(now.year, now.month, now.day - i)) ==
-  //                   DateFormat('dd/MM/yyyy').format(element.dateTime))
-  //               .toList();
-  //     }
-  //     if (_orderMonthly.isEmpty) {
-  //       _orderAmountMonthly = 0;
-  //     }
-  //     _orderMonthly.forEach((element) {
-  //       _orderAmountMonthly = _orderAmountMonthly + element.amount;
-  //       print(_orderAmountMonthly);
-  //     });
-  //   }
-  //   if (selectedDate == 3) {
-  //     for (int i = 0; i < 365; i++) {
-  //       _orderYearly = _orderYearly +
-  //           _listDelivered
-  //               .where((element) =>
-  //                   DateFormat('dd/MM/yyyy')
-  //                       .format(DateTime(now.year, now.month, now.day - i)) ==
-  //                   DateFormat('dd/MM/yyyy').format(element.dateTime))
-  //               .toList();
-  //     }
-  //     if (_orderYearly.isEmpty) {
-  //       _orderAmountYearly = 0;
-  //     }
-  //     _orderYearly.forEach((element) {
-  //       _orderAmountYearly = _orderAmountYearly + element.amount;
-  //     });
-  //   }
-  //   notifyListeners();
-  // }
-
   List<OrderItem> searchByDate(String date) {
     final orders = _listDefautl
         .where((element) =>
@@ -390,6 +320,19 @@ class Order with ChangeNotifier {
       throw Exception;
     }
     existingOrder = null;
+  }
+
+  int countOrderByMonth(int month) {
+    final now = DateTime.now();
+    final lstorders = _orders
+        .where((element) =>
+            element.dateTime.year == now.year &&
+            element.dateTime.month == month)
+        .toList();
+    if (lstorders == null) {
+      return 0;
+    }
+    return lstorders.length;
   }
 
   Future<void> cancelOrder(String id) async {
