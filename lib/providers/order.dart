@@ -322,6 +322,23 @@ class Order with ChangeNotifier {
     existingOrder = null;
   }
 
+  int countProductInMonth(int month) {
+    final now = DateTime.now();
+    int amount = 0;
+    final lstorders = _orders
+        .where((element) =>
+            element.dateTime.year == now.year &&
+            element.dateTime.month == month)
+        .toList();
+    if (lstorders.isEmpty) {
+      return 0;
+    }
+    lstorders.forEach((element) {
+      amount += element.productsOrder.length;
+    });
+    return amount;
+  }
+
   int countOrderByMonth(int month) {
     final now = DateTime.now();
     final lstorders = _orders
@@ -329,7 +346,7 @@ class Order with ChangeNotifier {
             element.dateTime.year == now.year &&
             element.dateTime.month == month)
         .toList();
-    if (lstorders == null) {
+    if (lstorders.isEmpty) {
       return 0;
     }
     return lstorders.length;

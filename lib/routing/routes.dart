@@ -6,8 +6,12 @@ const overviewPageRoute = "/overview";
 const productsPageDisplayName = "Products";
 const productsPageRoute = "/products";
 
+const statisticalPageDisplayName = "Statistical";
+const statisticalPageRoute = "/statistical";
+
 const clientsPageDisplayName = "Clients";
 const clientsPageRoute = "/clients";
+
 const ordersPageDisplayName = "Orders";
 const ordersPageRoute = "/orders";
 
@@ -23,6 +27,7 @@ class MenuItem {
 
 List<MenuItem> sideMenuItemRoutes = [
   MenuItem(overviewPageDisplayName, overviewPageRoute),
+  MenuItem(statisticalPageDisplayName, statisticalPageRoute),
   MenuItem(productsPageDisplayName, productsPageRoute),
   MenuItem(ordersPageDisplayName, ordersPageRoute),
   MenuItem(clientsPageDisplayName, clientsPageRoute),

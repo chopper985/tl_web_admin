@@ -6,6 +6,7 @@ import 'package:tl_web_admin/providers/user.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:tl_web_admin/utils/.env.dart';
 
 class Auth with ChangeNotifier {
   String _token;
@@ -108,11 +109,41 @@ class Auth with ChangeNotifier {
       _expiryDate = DateTime.now()
           .add(Duration(seconds: int.parse(responseData['expiresIn'])));
       autoLogout();
-      _isSignIn = check;
       notifyListeners();
     } catch (error) {
       print(error);
       throw error;
+    }
+  }
+
+  Future<bool> checkRole() async {
+    try {
+      String role = '';
+      print(_userId);
+      final url = Uri.parse('${baseURL}users/$_userId.json?auth=$_token');
+      final response = await http.get(url);
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        final extractedData =
+            json.decode(response.body) as Map<String, dynamic>;
+        extractedData.forEach((key, value) {
+          print(value['idUser'] + ' ++++ ' + _userId);
+          if (value['idUser'] == _userId) {
+            print(value['role']);
+            print(value['idUser']);
+            role = value['role'];
+          }
+        });
+        print(role);
+        if (role == 'Admin') {
+          return true;
+        }
+        return false;
+      }
+      return false;
+    } catch (error) {
+      print(error);
+      return false;
     }
   }
 

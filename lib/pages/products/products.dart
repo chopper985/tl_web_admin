@@ -44,7 +44,7 @@ class _ProductsPageState extends State<ProductsPage> {
   }
 
   Future<void> createExcel() async {
-    final product = Provider.of<Products>(context,listen: false);
+    final product = Provider.of<Products>(context, listen: false);
     final local = Provider.of<Local>(context, listen: false);
     List<Product> products =
         product.searchProducts(_keysearch.text, product.items);
@@ -201,12 +201,18 @@ class _ProductsPageState extends State<ProductsPage> {
                                           color: Colors.black, width: 1)),
                                   child: SingleChildScrollView(
                                     child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
-                                        Text(
-                                          'Export Data',
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              color: Colors.white),
+                                        Center(
+                                          child: Text(
+                                            'Export Data',
+                                            style: TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.white),
+                                          ),
                                         ),
                                         Spacer(),
                                         Icon(Icons.save_alt,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tl_web_admin/constants/style.dart';
 import 'package:tl_web_admin/providers/auth.dart';
+import 'package:tl_web_admin/providers/user.dart';
 import 'package:tl_web_admin/routing/routes.dart';
 import 'package:tl_web_admin/utils/http_exception.dart';
 import 'package:tl_web_admin/widgets/custom_text.dart';
@@ -56,12 +57,24 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       await Provider.of<Auth>(context, listen: false)
           .login(emailController.text.toString(),
               passwordController.text.toString())
-          .then((value) => {
-                Get.offAllNamed(rootRoute),
-                setState(() {
-                  _isLoading = false;
-                })
-              });
+          .then((value) {
+        Provider.of<Auth>(context, listen: false).checkRole().then((value) {
+          if (value == true) {
+            Get.offAllNamed(rootRoute);
+            setState(() {
+              _isLoading = false;
+            });
+          } else {
+            setState(() {
+              _isLoading = false;
+            });
+            Provider.of<User>(context, listen: false).logout();
+            Provider.of<Auth>(context, listen: false).logOut();
+            _showErrorDialog(
+                'The account does not have permission to login to the site.');
+          }
+        });
+      });
     } on HttpException catch (error) {
       var errorMessage = 'Authentication failed';
       if (error.toString().contains('EMAIL_EXISTS')) {

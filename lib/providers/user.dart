@@ -13,8 +13,10 @@ class UserItem {
   final String phoneNumber;
   final String address;
   final bool gender;
+  final String role;
   UserItem({
     @required this.id,
+    @required this.role,
     @required this.idUser,
     @required this.avatar,
     @required this.fullName,
@@ -29,6 +31,7 @@ class UserItem {
 class User with ChangeNotifier {
   String _authToken;
   String _userId;
+  String role;
   UserItem _user = UserItem(
     id: '',
     idUser: '',
@@ -40,6 +43,7 @@ class User with ChangeNotifier {
     address: '',
     avatar:
         'https://firebasestorage.googleapis.com/v0/b/flutter-shop-d0a51.appspot.com/o/avatar.jpg?alt=media&token=cdb54cc3-6514-4e4f-b69b-8794450d2da3',
+    role: '',
   );
 
   String get userId {
@@ -84,6 +88,7 @@ class User with ChangeNotifier {
           phoneNumber: item.phoneNumber,
           address: item.address,
           avatar: item.avatar,
+          role: '',
         );
         _user = newUser;
         notifyListeners();
@@ -143,7 +148,8 @@ class User with ChangeNotifier {
                 gender: value2['gender'],
                 idUser: value2['idUser'],
                 fullName: value2['fullName'],
-                avatar: value2['avatar']));
+                avatar: value2['avatar'],
+                role: ''));
           });
         });
         return list;
@@ -154,6 +160,7 @@ class User with ChangeNotifier {
     }
   }
 
+  
   Future<void> getUser() async {
     UserItem data;
     final url = Uri.parse('${baseURL}users/$_userId.json?auth=$_authToken');
@@ -166,6 +173,7 @@ class User with ChangeNotifier {
         extractedData.forEach((key, value) {
           if (value['idUser'] == _userId) {
             data = UserItem(
+              role: value['role'],
               id: key,
               idUser: _userId,
               fullName: value['fullName'],
@@ -199,6 +207,7 @@ class User with ChangeNotifier {
       address: '',
       avatar:
           'https://firebasestorage.googleapis.com/v0/b/flutter-shop-d0a51.appspot.com/o/avatar.jpg?alt=media&token=cdb54cc3-6514-4e4f-b69b-8794450d2da3',
+      role: '',
     );
     notifyListeners();
   }

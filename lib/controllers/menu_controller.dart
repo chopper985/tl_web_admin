@@ -24,7 +24,9 @@ class MenuController extends GetxController {
   Widget returnIconFor(String itemName) {
     switch (itemName) {
       case overviewPageDisplayName:
-        return _customIcon(Icons.trending_up, itemName);
+        return _customIcon(Icons.dashboard, itemName);
+      case statisticalPageDisplayName:
+        return _customIcon(Icons.trending_up,itemName);
       case productsPageDisplayName:
         return _customIcon(Icons.web_stories, itemName);
       case ordersPageDisplayName:
